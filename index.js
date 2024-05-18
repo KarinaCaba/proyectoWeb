@@ -10,10 +10,10 @@ app.use(express.json());
 
 app.use(express.static('public'));
 
-
+const port = process.env.PORT || 5000;
 app.use('/',router)
 
-app.listen(5000,()=>{
-    console.log('SERVER corriendo en http://localhost:5000')
+app.listen(port,()=>{
+    console.log(`SERVER corriendo en http://localhost:${port}`);
 }
 )

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('./database/db'); // Importa el módulo de la base de datos
+const { getAllBooks, searchBooks } = require('./controllers/books');
 
 // Ruta para mostrar la lista de libros
 router.get('/', (req, res) => {
@@ -14,6 +15,28 @@ router.get('/', (req, res) => {
     }
 }) 
     
+});
+
+// Ruta para la búsqueda en tiempo real
+router.get('/search', (req, res) => {
+    const query = req.query.q || '';
+    if (query) {
+        db.all('SELECT * FROM libros WHERE nombreLibro LIKE ? OR autor LIKE ? OR ISBN LIKE ?', [`%${query}%`, `%${query}%`, `%${query}%`], (err, results) => {
+            if (err) {
+                res.status(500).send(err.message);
+            } else {
+                res.json(results);
+            }
+        });
+    } else {
+        db.all('SELECT * FROM libros', (err, results) => {
+            if (err) {
+                res.status(500).send(err.message);
+            } else {
+                res.json(results);
+            }
+        });
+    }
 });
 
 //Ruta para crear registros 
@@ -70,6 +93,8 @@ router.post('/delete/:id', (req, res) => {
         res.redirect('/');
     }
 });
+
+
 
 const crud = require ('./controllers/crud');
 router.post('/save',crud.save);
